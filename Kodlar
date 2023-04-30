@@ -1,0 +1,473 @@
+class Program
+{
+    static void Main(string[] args)
+    {
+        // 10 noktayı belirleyin ve bunları bir diziye ekledim
+        var locations = new Location[]
+        {
+            new Location("Lokasyon 1", 40.9832, 29.1141, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    10
+                },
+                {
+                    "Temel Gıda",
+                    20
+                },
+                {
+                    "Isınma Gereci",
+                    5
+                },
+                {
+                    "Giyecek",
+                    5
+                }
+            }),
+            new Location("Lokasyon 2", 40.9834, 29.1154, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    20
+                },
+                {
+                    "Temel Gıda",
+                    10
+                },
+                {
+                    "Isınma Gereci",
+                    10
+                },
+                {
+                    "Giyecek",
+                    5
+                }
+            }),
+            new Location("Lokasyon 3", 40.9836, 29.1167, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    5
+                },
+                {
+                    "Temel Gıda",
+                    15
+                },
+                {
+                    "Isınma Gereci",
+                    10
+                },
+                {
+                    "Giyecek",
+                    10
+                }
+            }),
+            new Location("Lokasyon 4", 40.9838, 29.1180, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    10
+                },
+                {
+                    "Temel Gıda",
+                    10
+                },
+                {
+                    "Isınma Gereci",
+                    5
+                },
+                {
+                    "Giyecek",
+                    20
+                }
+            }),
+            new Location("Lokasyon 5", 40.9840, 29.1193, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    15
+                },
+                {
+                    "Temel Gıda",
+                    5
+                },
+                {
+                    "Isınma Gereci",
+                    10
+                },
+                {
+                    "Giyecek",
+                    15
+                }
+            }),
+            new Location("Lokasyon 6", 40.9842, 29.1206, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    10
+                },
+                {
+                    "Temel Gıda",
+                    10
+                },
+                {
+                    "Isınma Gereci",
+                    10
+                },
+                {
+                    "Giyecek",
+                    10
+                }
+            }),
+            new Location("Lokasyon 7", 40.9844, 29.1219, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    10
+                },
+                {
+                    "Temel Gıda",
+                    20
+                },
+                {
+                    "Isınma Gereci",
+                    5
+                },
+                {
+                    "Giyecek",
+                    5
+                }
+            }),
+            new Location("Lokasyon 8", 40.9846, 29.1232, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    5
+                },
+                {
+                    "Temel Gıda",
+                    15
+                },
+                {
+                    "Isınma Gereci",
+                    10
+                },
+                {
+                    "Giyecek",
+                    10
+                }
+            }),
+            new Location("Lokasyon 9", 40.9848, 29.1245, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    20
+                },
+                {
+                    "Temel Gıda",
+                    5
+                },
+                {
+                    "Isınma Gereci",
+                    15
+                },
+                {
+                    "Giyecek",
+                    5
+                }
+            }),
+            new Location("Lokasyon 10", 40.9850, 29.1258, new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    10
+                },
+                {
+                    "Temel Gıda",
+                    10
+                },
+                {
+                    "Isınma Gereci",
+                    10
+                },
+                {
+                    "Giyecek",
+                    10
+                }
+            })
+        };
+
+
+        // Dağıtım yapılacak lokasyonları belirledim
+        Console.WriteLine("Dağıtım yapılacak lokasyonları belirleyin (örn. '1,2,3'):");
+        string[] selectedLocations = Console.ReadLine().Split(',');
+
+        // Dağıtım yapılacak ürünleri belirledim
+        Console.WriteLine("Dağıtım yapılacak ürünleri belirleyin (örn. 'Sağlık Malzemesi, Temel Gıda'):");
+        string[] selectedItems = Console.ReadLine().Split(',');
+
+        // Belirtilen ürünlerin gereksinim miktarını belirledim
+        var itemNeeds = new Dictionary<string,
+            int>();
+        foreach (var item in selectedItems)
+        {
+            Console.WriteLine($"'{item}' ihtiyacı (örn. 30):");
+            int need = int.Parse(Console.ReadLine());
+            itemNeeds.Add(item, need);
+        }
+
+        // Belirtilen noktalarda gereksinimlerin toplamını hesapladım
+        var totalNeeds = new Dictionary<string,
+            int>();
+        foreach (var item in selectedItems)
+        {
+            int total = 0;
+            foreach (var loc in locations)
+            {
+                if (selectedLocations.Contains(loc.Name))
+                {
+                    total += loc.Inventory[item];
+                }
+            }
+
+            totalNeeds.Add(item, total);
+        }
+
+        // Grafiği oluşturdum
+        var graph = new Dictionary<string,
+            Dictionary<string, double>>();
+        foreach (var loc in locations)
+        {
+            graph.Add(loc.Name, new Dictionary<string, double>());
+            foreach (var neighbor in locations)
+            {
+                if (loc != neighbor)
+                {
+                    double distance =
+                        Math.Sqrt(Math.Pow(loc.Lat - neighbor.Lat, 2) + Math.Pow(loc.Lon - neighbor.Lon, 2));
+                    graph[loc.Name].Add(neighbor.Name, distance);
+                }
+            }
+        }
+
+
+        // En kısa yolu buldum
+        var shortestPath = Dijkstra.ShortestPath(graph, "Depo", selectedLocations);
+        Console.WriteLine($"En kısa rota: {string.Join(" - > ", shortestPath)}");
+
+        // Rota boyunca ihtiyaçları karşılamak için gerekli stoğu hesapladım
+        var depot = GetDepot();
+
+        var requiredStock = new Dictionary<string,
+            int>();
+        foreach (var item in selectedItems)
+        {
+            int total = totalNeeds[item];
+            int stock = depot.Inventory[item];
+            foreach (var loc in shortestPath)
+            {
+                if (loc != "Depo")
+                {
+                    stock += locations.First(l => l.Name == loc).Inventory[item];
+                }
+            }
+
+            requiredStock.Add(item, Math.Max(0, total - stock));
+        }
+
+        // Sonuçları yazdırdım
+        Console.WriteLine("Gereken stok:");
+        foreach (var item in requiredStock)
+        {
+            Console.WriteLine($"{item.Key}: {item.Value}");
+        }
+
+        Console.WriteLine("Dağıtım planı:");
+        foreach (var loc in shortestPath)
+        {
+            if (loc != "Depo")
+            {
+                Console.WriteLine($"- {loc}:");
+                foreach (var item in selectedItems)
+                {
+                    int need = locations.First(l => l.Name == loc).Inventory[item];
+                    int supply = Math.Min(need, depot.Inventory[item]);
+                    Console.WriteLine($"    {item}: {supply}");
+                    depot.Inventory[item] -= supply;
+                    need -= supply;
+                    foreach (var neighbor in graph[loc])
+                    {
+                        if (need == 0)
+                        {
+                            break;
+                        }
+
+                        int available = Math.Min(need, locations.First(l => l.Name == neighbor.Key).Inventory[item]);
+                        Console.WriteLine($"    {item} ({loc} -> {neighbor.Key}): {available}");
+                        locations.First(l => l.Name == neighbor.Key).Inventory[item] -= available;
+                        need -= available;
+                    }
+
+                    if (need > 0)
+                    {
+                        Console.WriteLine($"    {item} ({loc} -> Depo): {need}");
+                        depot.Inventory[item] -= need;
+                    }
+                }
+            }
+        }
+
+
+        Console.ReadLine();
+    }
+
+    // Dijkstra algoritması
+    public static class Dijkstra
+    {
+        public static List<string> ShortestPath(Dictionary<string, Dictionary<string, double>> graph, string start,
+            string[] destinations)
+        {
+            var unvisited = new HashSet<string>(graph.Keys);
+            var distances = new Dictionary<string,
+                double>();
+            var previous = new Dictionary<string,
+                string>();
+            foreach (var vertex in graph)
+            {
+                distances[vertex.Key] = double.MaxValue;
+                previous[vertex.Key] = null;
+            }
+
+            distances[start] = 0;
+
+            while (unvisited.Count > 0)
+            {
+                string current = null;
+                foreach (var vertex in unvisited)
+                {
+                    if (current == null || distances[vertex] < distances[current])
+                    {
+                        current = vertex;
+                    }
+                }
+
+                if (current == null)
+                {
+                    break;
+                }
+
+                unvisited.Remove(current);
+
+                foreach (var neighbor in graph[current])
+                {
+                    double distance = distances[current] + neighbor.Value;
+                    if (distance < distances[neighbor.Key])
+                    {
+                        distances[neighbor.Key] = distance;
+                        previous[neighbor.Key] = current;
+                    }
+                }
+            }
+
+            var path = new List<string>();
+            string dest = null;
+            double shortestDistance = double.MaxValue;
+            foreach (var vertex in destinations)
+            {
+                if (distances["Lokasyon " + vertex] < shortestDistance)
+                {
+                    dest = vertex;
+                    shortestDistance = distances[vertex];
+                }
+            }
+
+            while (dest != null)
+            {
+                path.Insert(0, dest);
+                dest = previous[dest];
+            }
+
+            return path;
+        }
+    }
+
+    // Yer sınıfı
+    public class Location
+    {
+        public string Name { get; set; }
+        public double Lat { get; set; }
+        public double Lon { get; set; }
+        public Dictionary<string, int> Inventory { get; set; }
+
+        public Location(string name, double lat, double lon, Dictionary<string, int> inventory)
+        {
+            Name = name;
+            Lat = lat;
+            Lon = lon;
+            Inventory = inventory;
+        }
+    }
+
+    // Depo sınıfı
+    public class Depot : Location
+    {
+        public Depot(string name, double lat, double lon, Dictionary<string, int> inventory) : base(name, lat, lon,
+            inventory)
+        {
+        }
+
+        public Depot() : base("Depo", 0, 0, new Dictionary<string, int>())
+        {
+        }
+    }
+
+
+    public static Depot GetDepot()
+    {
+        return new Depot
+        {
+            Name = "Depo",
+            Inventory = new Dictionary<string, int>
+            {
+                {
+                    "Sağlık Malzemesi",
+                    100
+                },
+                {
+                    "Temel Gıda",
+                    100
+                },
+                {
+                    "Isınma Gereci",
+                    70
+                },
+                {
+                    "Giyecek",
+                    70
+                }
+            }
+        };
+    }
+}
+
+// Destekleyici sınıflar
+public static class Utils
+{
+    // Haversine formülü kullanarak iki nokta arasındaki mesafeyi hesaplar
+    public static double HaversineDistance(double lat1, double lon1, double lat2, double lon2)
+    {
+        const double r = 6371; // Dünya yarıçapı (km)
+        var dLat = ToRadians(lat2 - lat1);
+        var dLon = ToRadians(lon2 - lon1);
+        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(ToRadians(lat1)) *
+            Math.Cos(ToRadians(lat2)) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        return r * c;
+    }
+
+    // Dereceyi radyana dönüştürür
+    public static double ToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+}
